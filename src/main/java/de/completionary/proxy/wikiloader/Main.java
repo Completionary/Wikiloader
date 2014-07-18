@@ -10,7 +10,7 @@ import de.completionary.proxy.wikiloader.Helper.ImportScript;
 public class Main {
 
 	public static void main(String[] args) {
-		List<SuggestionField> terms = ImportScript.loadServerWiki(100000);
+		List<SuggestionField> terms = ImportScript.loadServerWiki(10000);
 
 		SuggestionIndex client = new SuggestionIndex("index");
 		try {
