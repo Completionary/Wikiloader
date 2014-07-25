@@ -7,14 +7,14 @@ import java.util.concurrent.ExecutionException;
 import org.apache.thrift.async.AsyncMethodCallback;
 
 import de.completionary.proxy.elasticsearch.SuggestionIndex;
-import de.completionary.proxy.thrift.services.SuggestionField;
+import de.completionary.proxy.thrift.services.admin.SuggestionField;
 import de.completionary.proxy.wikiloader.Helper.ImportScript;
 
 public class Main {
 
     public static void main(String[] args) throws InterruptedException,
             ExecutionException {
-        final List<SuggestionField> terms = ImportScript.loadServerWiki(1000);
+        final List<SuggestionField> terms = ImportScript.loadServerWiki(10000);
 
         int bytesStored = 0;
         for (SuggestionField field : terms) {
@@ -23,7 +23,7 @@ public class Main {
         final int fBytesStored = bytesStored;
 
         SuggestionIndex.delete("index");
-        SuggestionIndex client = SuggestionIndex.getIndex("index");
+        SuggestionIndex client = SuggestionIndex.getIndex("wikipediaindex");
         try {
             client.truncate();
             long startTime = System.currentTimeMillis();

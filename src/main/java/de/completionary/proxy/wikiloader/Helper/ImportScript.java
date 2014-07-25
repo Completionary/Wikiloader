@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 
-import de.completionary.proxy.thrift.services.SuggestionField;
+import de.completionary.proxy.thrift.services.admin.SuggestionField;
 
 /**
  * @author Rene Pickhardt
