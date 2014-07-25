@@ -16,7 +16,7 @@ import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 
-import de.completionary.proxy.structs.SuggestionField;
+import de.completionary.proxy.thrift.services.SuggestionField;
 
 /**
  * @author Rene Pickhardt
@@ -111,9 +111,14 @@ public class ImportScript {
                 Integer pr = prValues.get(Integer.parseInt(id));
                 if (pr != null && pr != null && key != null) {
                     values = title.split(" ");
+                    StringBuilder payload = new StringBuilder("{ \"img\":\"");
+                    payload.append(result);
+                    payload.append("\", \"href\":\"http://de.wikipedia.org/wiki/");
+                    payload.append(key);
+                    payload.append("\"}");
                     SuggestionField field =
-                            new SuggestionField(key, Arrays.asList(title),
-                                    result, pr);
+                            new SuggestionField(key, key, Arrays.asList(title),
+                                    payload.toString(), pr);
                     fields.add(field);
                     if (fields.size() == maxNumberOfElements) {
                         return fields;
