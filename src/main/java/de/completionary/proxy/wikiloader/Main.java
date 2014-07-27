@@ -2,7 +2,9 @@ package de.completionary.proxy.wikiloader;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.thrift.async.AsyncMethodCallback;
 
@@ -28,20 +30,43 @@ public class Main {
             client.truncate();
             long startTime = System.currentTimeMillis();
 
-            client.async_addTerms(terms, new AsyncMethodCallback<Long>() {
+            for (SuggestionField field : terms) {
+                final CountDownLatch lock = new CountDownLatch(1);
+                client.async_addSingleTerm(field.ID, field.input, field.output,
+                        field.payload, field.weight,
+                        new AsyncMethodCallback<Long>() {
 
-                @Override
-                public void onError(Exception e) {
-                    e.printStackTrace();
-                }
+                            @Override
+                            public void onError(Exception e) {
+                                e.printStackTrace();
+                                lock.countDown();
+                            }
 
-                @Override
-                public void onComplete(Long time) {
-                    System.out.println("Added " + terms.size()
-                            + " terms within " + time + " ms with about "
-                            + fBytesStored / 1000 + " kBytes");
-                }
-            });
+                            @Override
+                            public void onComplete(Long time) {
+                                lock.countDown();
+                            }
+                        });
+                lock.await(2000, TimeUnit.MILLISECONDS);
+            }
+            System.out.println("Added " + terms.size() + " terms with about "
+                    + fBytesStored / 1000 + " kBytes");
+
+            //            
+            //            client.async_addTerms(terms, new AsyncMethodCallback<Long>() {
+            //
+            //                @Override
+            //                public void onError(Exception e) {
+            //                    e.printStackTrace();
+            //                }
+            //
+            //                @Override
+            //                public void onComplete(Long time) {
+            //                    System.out.println("Added " + terms.size()
+            //                            + " terms within " + time + " ms with about "
+            //                            + fBytesStored / 1000 + " kBytes");
+            //                }
+            //            });
 
         } catch (IOException e) {
             e.printStackTrace();
