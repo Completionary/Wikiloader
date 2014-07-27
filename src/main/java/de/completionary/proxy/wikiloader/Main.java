@@ -14,7 +14,7 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException,
             ExecutionException {
-        final List<SuggestionField> terms = ImportScript.loadServerWiki(10000);
+        final List<SuggestionField> terms = ImportScript.loadServerWiki(1000);
 
         int bytesStored = 0;
         for (SuggestionField field : terms) {
@@ -27,11 +27,12 @@ public class Main {
         try {
             client.truncate();
             long startTime = System.currentTimeMillis();
+
             client.async_addTerms(terms, new AsyncMethodCallback<Long>() {
 
                 @Override
-                public void onError(Exception arg0) {
-
+                public void onError(Exception e) {
+                    e.printStackTrace();
                 }
 
                 @Override
