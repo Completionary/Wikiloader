@@ -1,0 +1,2 @@
+this one assumes you already have pictures from wikipedia and page rank values for articles. 
+there are scripts to produce this but they need to be cleaned up. unless you have the rawdata this script is pretty pointless.
