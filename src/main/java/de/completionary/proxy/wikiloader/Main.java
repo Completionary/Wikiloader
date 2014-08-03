@@ -20,7 +20,7 @@ public class Main {
 
         int bytesStored = 0;
         for (SuggestionField field : terms) {
-            bytesStored += field.output.length() + field.payload.length();
+            bytesStored += field.outputField.length() + field.payload.length();
         }
         final int fBytesStored = bytesStored;
 
@@ -32,7 +32,7 @@ public class Main {
 
             for (SuggestionField field : terms) {
                 final CountDownLatch lock = new CountDownLatch(1);
-                client.async_addSingleTerm(field.ID, field.input, field.output,
+                client.async_addSingleTerm(field.ID, field.input, field.outputField,
                         field.payload, field.weight,
                         new AsyncMethodCallback<Long>() {
 
