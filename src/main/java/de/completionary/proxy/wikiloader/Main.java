@@ -23,9 +23,10 @@ public class Main {
             bytesStored += field.output.length() + field.payload.length();
         }
         final int fBytesStored = bytesStored;
-
-        SuggestionIndex.delete("index");
-        SuggestionIndex client = SuggestionIndex.getIndex("wikipediaindex");
+        final String indexName="wikipediaindex";
+        
+        SuggestionIndex.delete(indexName);
+        SuggestionIndex client = SuggestionIndex.getIndex(indexName);
         try {
             client.truncate();
             long startTime = System.currentTimeMillis();
