@@ -10,6 +10,8 @@ import org.apache.thrift.async.AsyncMethodCallback;
 
 import de.completionary.proxy.elasticsearch.SuggestionIndex;
 import de.completionary.proxy.thrift.services.admin.SuggestionField;
+import de.completionary.proxy.thrift.services.exceptions.InvalidIndexNameException;
+import de.completionary.proxy.thrift.services.exceptions.ServerDownException;
 import de.completionary.proxy.wikiloader.Helper.ImportScript;
 
 public class Main {
@@ -25,15 +27,17 @@ public class Main {
         final int fBytesStored = bytesStored;
 
         SuggestionIndex.delete("index");
-        SuggestionIndex client = SuggestionIndex.getIndex("wikipediaindex");
+        SuggestionIndex client;
         try {
+            client = SuggestionIndex.getIndex("wikipediaindex");
+
             client.truncate();
             long startTime = System.currentTimeMillis();
 
             for (SuggestionField field : terms) {
                 final CountDownLatch lock = new CountDownLatch(1);
-                client.async_addSingleTerm(field.ID, field.input, field.outputField,
-                        field.payload, field.weight,
+                client.async_addSingleTerm(field.ID, field.input,
+                        field.outputField, field.payload, field.weight,
                         new AsyncMethodCallback<Long>() {
 
                             @Override
@@ -68,10 +72,13 @@ public class Main {
             //                }
             //            });
 
+            client.waitForGreen();
+        } catch (InvalidIndexNameException | ServerDownException e1) {
+            e1.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        client.waitForGreen();
+
     }
 
 }
