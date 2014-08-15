@@ -10,21 +10,23 @@ import org.apache.thrift.async.AsyncMethodCallback;
 
 import de.completionary.proxy.elasticsearch.SuggestionIndex;
 import de.completionary.proxy.thrift.services.admin.SuggestionField;
+import de.completionary.proxy.thrift.services.exceptions.InvalidIndexNameException;
+import de.completionary.proxy.thrift.services.exceptions.ServerDownException;
 import de.completionary.proxy.wikiloader.Helper.ImportScript;
 
 public class Main {
 
     public static void main(String[] args) throws InterruptedException,
-            ExecutionException {
+            ExecutionException, InvalidIndexNameException, ServerDownException {
         final List<SuggestionField> terms = ImportScript.loadServerWiki(1000);
 
         int bytesStored = 0;
         for (SuggestionField field : terms) {
-            bytesStored += field.output.length() + field.payload.length();
+            bytesStored += field.outputField.length() + field.payload.length();
         }
         final int fBytesStored = bytesStored;
-        final String indexName="wikipediaindex";
-        
+        final String indexName = "wikipediaindex";
+
         SuggestionIndex.delete(indexName);
         SuggestionIndex client = SuggestionIndex.getIndex(indexName);
         try {
@@ -33,8 +35,8 @@ public class Main {
 
             for (SuggestionField field : terms) {
                 final CountDownLatch lock = new CountDownLatch(1);
-                client.async_addSingleTerm(field.ID, field.input, field.output,
-                        field.payload, field.weight,
+                client.async_addSingleTerm(field.ID, field.input,
+                        field.outputField, field.payload, field.weight,
                         new AsyncMethodCallback<Long>() {
 
                             @Override

@@ -66,6 +66,8 @@ public class ImportScript {
                                 "/var/lib/datasets/rawdata/commons/articlswiththumbnail.tsv"))) {
 
             String line = null;
+
+            long suggestionID = 0;
             while ((line = br.readLine()) != null) {
                 String[] values = line.split("\t");
                 if (values.length != 3)
@@ -116,9 +118,8 @@ public class ImportScript {
                     payload.append("\", \"href\":\"http://de.wikipedia.org/wiki/");
                     payload.append(key);
                     payload.append("\"}");
-                    SuggestionField field =
-                            new SuggestionField(key, key, Arrays.asList(title),
-                                    payload.toString(), pr);
+                    SuggestionField field = new SuggestionField(suggestionID++,
+                            key, Arrays.asList(title), payload.toString(), pr);
                     fields.add(field);
                     if (fields.size() == maxNumberOfElements) {
                         return fields;
